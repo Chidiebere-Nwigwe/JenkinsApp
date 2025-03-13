@@ -1,0 +1,16 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build') {
+            agent {
+                docker { 
+                    image 'node:22.13.1-alpine' 
+                    reuseNode true
+                }
+            }
+            steps {
+                sh 'node --version'
+            }
+        }
+    }
+}
