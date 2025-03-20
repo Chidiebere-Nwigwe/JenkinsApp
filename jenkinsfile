@@ -46,11 +46,14 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        //stage('Deploy')
+        stage("AWS") {
             agent {
                 docker { 
                    // image 'node:22.13.1-alpine'
-                    image 'my-docker-image' 
+                   // image 'my-docker-image' 
+                   image 'amazon/aws-cli'
+
                     reuseNode true
                 }
             }
@@ -64,10 +67,12 @@ pipeline {
 
 
                     ###### custom docker image
-                    netlify --version
-                    echo "Deploying to Site ID: $NETLIFY_SITE_ID"
-                    netlify status
-                    netlify deploy --prod --dir=build
+                     # netlify --version
+                     # echo "Deploying to Site ID: $NETLIFY_SITE_ID"
+                      # netlify status
+                     # netlify deploy --prod --dir=build
+
+                     aws --version
                 '''
             }
         }
