@@ -1,78 +1,89 @@
 pipeline {
     agent any
 
-    environment {
-        NETLIFY_SITE_ID = '2bc5c8aa-6350-47bc-898a-076b67098e1b'
-        NETLIFY_AUTH_TOKEN = credentials('my-react-token')
-    }
+    // environment {
+    //     NETLIFY_SITE_ID = '2bc5c8aa-6350-47bc-898a-076b67098e1b'
+    //     NETLIFY_AUTH_TOKEN = credentials('my-react-token')
+    // }
 
     stages {
-        stage('Docker'){
-            steps{
-                sh 'docker build -t my-docker-image .'
-            }
-        }
-        stage('Build') {
-            agent {
-                docker { 
-                    image 'node:22.13.1-alpine' 
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    ls -la
-                    node --version
-                    npm --version
-                    npm install
-                    npm run build
-                    ls -la
-                '''
-            }
-        }
+        // stage('Docker'){
+        //     steps{
+        //         sh 'docker build -t my-docker-image .'
+        //     }
+        // }
+        // stage('Build') {
+        //     agent {
+        //         docker { 
+        //             image 'node:22.13.1-alpine' 
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             ls -la
+        //             node --version
+        //             npm --version
+        //             npm install
+        //             npm run build
+        //             ls -la
+        //         '''
+        //     }
+        // }
 
-        stage('Test') {
-            agent {
-                docker { 
-                    image 'node:22.13.1-alpine' 
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    test -f build/index.html
-                    npm test
-                '''
-            }
-        }
+        // stage('Test') {
+        //     agent {
+        //         docker { 
+        //             image 'node:22.13.1-alpine' 
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             test -f build/index.html
+        //             npm test
+        //         '''
+        //     }
+        // }
 
-        //stage('Deploy')
+        // stage('Deploy') {
+        //     agent {
+        //         docker { 
+        //            // image 'node:22.13.1-alpine'
+        //             image 'my-docker-image' 
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             # npm install netlify-cli
+        //             # node_modules/.bin/netlify --version
+        //             # echo "Deploying to Site ID: $NETLIFY_SITE_ID"
+        //             # node_modules/.bin/netlify status
+        //             # node_modules/.bin/netlify deploy --prod --dir=build
+
+
+        //             ###### custom docker image
+        //             netlify --version
+        //             echo "Deploying to Site ID: $NETLIFY_SITE_ID"
+        //             netlify status
+        //             netlify deploy --prod --dir=build
+        //         '''
+        //     }
+        // }
+
         stage("AWS") {
             agent {
                 docker { 
-                   // image 'node:22.13.1-alpine'
-                   // image 'my-docker-image' 
-                   image 'amazon/aws-cli'
-
+                    image 'amazon/aws-cli' 
                     reuseNode true
+                    args '--entrypoint=""'
                 }
             }
             steps {
                 sh '''
-                    # npm install netlify-cli
-                    # node_modules/.bin/netlify --version
-                    # echo "Deploying to Site ID: $NETLIFY_SITE_ID"
-                    # node_modules/.bin/netlify status
-                    # node_modules/.bin/netlify deploy --prod --dir=build
-
-
-                    ###### custom docker image
-                     # netlify --version
-                     # echo "Deploying to Site ID: $NETLIFY_SITE_ID"
-                      # netlify status
-                     # netlify deploy --prod --dir=build
-
-                     aws --version
+                    aws --version
+                    aws s3 ls
                 '''
             }
         }
