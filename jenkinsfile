@@ -13,39 +13,39 @@ pipeline {
         //     }
         // }
 
-        stage('Build') {
-            agent {
-                docker { 
-                    image 'node:22.13.1-alpine' 
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    ls -la
-                    node --version
-                    npm --version
-                    npm install
-                    npm run build
-                    ls -la
-                '''
-            }
-        }
+        // stage('Build') {
+        //     agent {
+        //         docker { 
+        //             image 'node:22.13.1-alpine' 
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             ls -la
+        //             node --version
+        //             npm --version
+        //             npm install
+        //             npm run build
+        //             ls -la
+        //         '''
+        //     }
+        // }
 
-        stage('Test') {
-            agent {
-                docker { 
-                    image 'node:22.13.1-alpine' 
-                    reuseNode true
-                }
-            }
-            steps {
-                sh '''
-                    test -f build/index.html
-                    npm test
-                '''
-            }
-        }
+        // stage('Test') {
+        //     agent {
+        //         docker { 
+        //             image 'node:22.13.1-alpine' 
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             test -f build/index.html
+        //             npm test
+        //         '''
+        //     }
+        // }
 
         // stage('Deploy') {
         //     agent {
@@ -73,7 +73,35 @@ pipeline {
         //     }
         // }
 
-        stage("AWS") {
+        // stage("AWS") {
+        //     agent {
+        //         docker { 
+        //             image 'amazon/aws-cli' 
+        //             reuseNode true
+        //             args '--entrypoint=""'
+        //         }
+        //     }
+
+        //     environment{
+        //         AWS_S3_BUCKET = 'my-new-03202025'
+        //     }
+
+        //     steps {
+
+        //         withCredentials([usernamePassword(credentialsId: 'my-temp', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
+        //         // some block
+        //         sh '''
+        //             aws --version
+        //             aws s3 ls
+        //             echo "Hello S3!"> index.html
+        //             # aws s3 cp index.html s3://my-new-03202025/index.html
+        //             aws s3 sync build s3://$AWS_S3_BUCKET
+        //         '''
+        //         }
+        //     }
+        // }
+
+        stage("Deploy to AWS") {
             agent {
                 docker { 
                     image 'amazon/aws-cli' 
@@ -82,20 +110,15 @@ pipeline {
                 }
             }
 
-            environment{
-                AWS_S3_BUCKET = 'my-new-03202025'
-            }
 
             steps {
 
                 withCredentials([usernamePassword(credentialsId: 'my-temp', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                 // some block
                 sh '''
-                    aws --version
-                    aws s3 ls
-                    echo "Hello S3!"> index.html
-                    # aws s3 cp index.html s3://my-new-03202025/index.html
-                    aws s3 sync build s3://$AWS_S3_BUCKET
+                    aws --versio
+
+                    aws ecs register-task-definintion --cli-input-json-file://aws/task-definition.json
                 '''
                 }
             }
