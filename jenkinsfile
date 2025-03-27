@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        AWS_DEFAULT_REGION = 'us-east-2'
+    }
+
     // environment {
     //     NETLIFY_SITE_ID = '2bc5c8aa-6350-47bc-898a-076b67098e1b'
     //     NETLIFY_AUTH_TOKEN = credentials('my-react-token')
@@ -116,7 +120,7 @@ pipeline {
                 withCredentials([usernamePassword(credentialsId: 'my-temp', passwordVariable: 'AWS_SECRET_ACCESS_KEY', usernameVariable: 'AWS_ACCESS_KEY_ID')]) {
                 // some block
                 sh '''
-                    aws --versio
+                    aws --version
 
                     aws ecs register-task-definintion --cli-input-json-file://aws/task-definition.json
                 '''
